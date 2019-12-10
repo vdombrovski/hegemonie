@@ -50,8 +50,21 @@ func save(w *World) error {
 	return nil
 }
 
-func runServer(w *World) error {
-	m := macaron.Classic()
+func routes(w *World, m *macaron.Macaron) {
+	m.Get("/map/dot", func(ctx *macaron.Context) (int, string) {
+		return 200, w.Places.Dot()
+	})
+	m.Post("/map/rehash", func(ctx *macaron.Context) (int, string) {
+		w.Places.Rehash()
+		return 204, ""
+	})
+	m.Post("/map/check", func(ctx *macaron.Context) (int, string) {
+		if err := w.Places.Check(w); err == nil {
+			return 204, ""
+		} else {
+			return 502, err.Error()
+		}
+	})
 	m.Post("/check", func(ctx *macaron.Context) (int, string) {
 		if err := w.Check(); err == nil {
 			return 204, ""
@@ -66,9 +79,11 @@ func runServer(w *World) error {
 			return 501, err.Error()
 		}
 	})
-	m.Get("/", func(ctx *macaron.Context) (int, string) {
-		return 204, ""
-	})
+}
+
+func runServer(w *World) error {
+	m := macaron.Classic()
+	routes(w, m)
 	m.NotFound(func(ctx *macaron.Context) (int, string) {
 		return 404, ""
 	})
