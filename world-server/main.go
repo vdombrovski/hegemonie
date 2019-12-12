@@ -81,13 +81,13 @@ func routes(w *World, m *macaron.Macaron) {
 	})
 }
 
-func runServer(w *World) error {
+func runServer(w *World, north string) error {
 	m := macaron.Classic()
 	routes(w, m)
 	m.NotFound(func(ctx *macaron.Context) (int, string) {
 		return 404, ""
 	})
-	return http.ListenAndServe("127.0.0.1:8080", m)
+	return http.ListenAndServe(north, m)
 }
 
 func main() {
@@ -96,9 +96,12 @@ func main() {
 
 	w.Init()
 
+	var north string
 	var pathLoad string
+	flag.StringVar(&north, "north", "127.0.0.1:8081", "File to be loaded")
 	flag.StringVar(&pathLoad, "load", "", "File to be loaded")
 	flag.StringVar(&pathSave, "save", "/tmp/hegemonie/data", "Directory for persistent")
+	flag.Parse()
 
 	if pathSave != "" {
 		err = os.MkdirAll(pathSave, 0755)
@@ -124,7 +127,7 @@ func main() {
 		log.Fatalf("Inconsistent World: %s", err.Error())
 	}
 
-	err = runServer(&w)
+	err = runServer(&w, north)
 	if err != nil {
 		log.Printf("Server error: %s", err.Error())
 	}
