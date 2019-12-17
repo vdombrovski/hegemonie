@@ -19,8 +19,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	. "../world-client"
+	"hegemonie/common/mapper"
 )
 
 type LoginForm struct {
@@ -125,6 +125,17 @@ func (f *front) routePages(m *macaron.Macaron) {
 				ctx.Data["lid"] = landid
 				ctx.HTML(200, "land")
 			}
+		})
+	m.Get("/game/map",
+		func(ctx *macaron.Context, s session.Store) {
+			gameMap, overlay, err := mapper.Generate()
+			if err != nil {
+				ctx.Resp.WriteHeader(500)
+				return
+			}
+			ctx.Data["map"] = gameMap
+			ctx.Data["overlay"] = overlay
+			ctx.HTML(200, "map")
 		})
 }
 

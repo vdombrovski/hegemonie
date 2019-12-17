@@ -1,0 +1,43 @@
+.frame {
+    width: 100vw;
+    height: 100vh;
+    background: #EEEEEE;
+    display: block;
+    overflow: hidden;
+}
+
+.canvas {
+    width: 256vw;
+    height: 256vw;
+    background: #CCCCCC;
+    display: block;
+    margin-top: -100vw;
+    margin-left: -50vw;
+    /*transform:rotate3d(-30, 0, -20, 45deg);*/
+    transform: rotateX(64deg) rotateY(0deg) rotateZ(-45deg);
+    /* (116.565°, 116.565°, 126.87° */
+}
+
+/* res is 32*18 */
+.tile {
+    float: left;
+    width: 4vw;
+    height: 4vw;
+    background-image: url('spritemap.png');
+    background-repeat: no-repeat;
+    background-size : 2000% 2000%;
+    box-shadow: inset 0 0 1px #555;
+}
+
+.overlay {
+  position: absolute;
+  width: 4vw;
+  height: 4vw;
+  background-image: url('spritemap.png');
+  background-repeat: no-repeat;
+  background-size : 2000% 2000%;
+}
+
+.tile:hover {
+    box-shadow: inset 0 0 4px #000;
+}

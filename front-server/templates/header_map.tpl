@@ -11,13 +11,14 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 <meta name="theme-color" content="#FFF"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content="${description}"/>
+<link rel="stylesheet" href="/static/map.css"/>
 <link rel="stylesheet" href="/static/style.css"/>
+<link rel="stylesheet" href="/static/meyer_reset.css"/>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/3.2.3/jquery.panzoom.min.js"></script>
+
 </head>
 <body>
-<header><h1>Hegemonie</h1></header>
-<nav>
-    {% if Character.Meta.Id %}<a href="/game/character?cid={{ Character.Meta.Id }}">My Character</a>{% endif %}
-    {% if userid %}<a href="/game/user">Character</a>{% endif %}
-    {% if userid %}<a href="/action/logout">Log-Out</a>{% endif %}
-</nav>
-<main>
