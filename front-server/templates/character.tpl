@@ -1,15 +1,11 @@
 {% include "header.tpl" %}
-<h1>Hegemonie</h1>
 
-<h2>Your are...</h2>
-<p><a href="/game/character">Character</a></p>
+<h2>The cities managed by {{Character.Meta.Name}}</h2>
+<ul>{% for c in Character.OwnerOf %}
+    <li><a href="/game/land?cid={{Character.Meta.Id}}&lid={{c.Id}}">{{c.Name}}</a></li>{% endfor %}
+</ul>
+<ul>{% for c in Character.DeputyOf %}
+    <li><a href="/game/land?cid={{Character.Meta.Id}}&lid={{c.Id}}">{{c.Name}}</a></li>{% endfor %}
+</ul>
 
-<h2>Your cities</h2>
-<li>
-    <ul><a href="/game/land">City</a></ul>
-</li>
-
-<h2>Admin</h2>
-<p>Logged as {{userid}}. Check <a href="/game/user">your profile</a></p>
-<form action="/action/logout" method="post"><input type="submit" value="Log Out"/></form>
 {% include "footer.tpl" %}

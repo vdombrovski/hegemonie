@@ -8,14 +8,17 @@ package main
 import (
 	"errors"
 	"flag"
+	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	. "../world"
+	. "../world-client"
 )
 
 var (
@@ -50,7 +53,86 @@ func save(w *World) error {
 	return nil
 }
 
+type AuthRequest struct {
+	UserMail string `form:"email" binding:"Required"`
+	UserPass string `form:"password" binding:"Required"`
+}
+
 func routes(w *World, m *macaron.Macaron) {
+	m.Post("/user/auth", binding.Bind(AuthRequest{}),
+		func(ctx *macaron.Context, form AuthRequest) {
+			id, err := w.People.UserAuth(form.UserMail, form.UserPass)
+			if id != 0 {
+				ctx.JSON(200, AuthReply{Id: id})
+			} else if err == nil {
+				ctx.JSON(403, AuthReply{Id: 0})
+			} else {
+				ctx.JSON(500, AuthReply{Id: 0, Msg: err.Error()})
+			}
+		})
+
+	m.Get("/user/show",
+		func(ctx *macaron.Context) {
+			struid := ctx.Query("uid")
+			if id, err := strconv.ParseUint(struid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed User ID"})
+			} else if user, err := w.People.UserGet(id); err != nil {
+				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
+			} else {
+				var payload UserShowReply
+				payload.Characters = make([]NamedItem, 0)
+				payload.Meta = user
+				w.People.UserGetCharacters(id, func(c *Character) {
+					payload.Characters = append(payload.Characters, NamedItem{Name: c.Name, Id: c.Id})
+				})
+				ctx.JSON(200, &payload)
+			}
+		})
+
+	m.Get("/character/show",
+		func(ctx *macaron.Context) {
+			struid := ctx.Query("uid")
+			strcid := ctx.Query("cid")
+			if uid, err := strconv.ParseUint(struid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed User ID"})
+			} else if cid, err := strconv.ParseUint(strcid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Character ID"})
+			} else if character, err := w.People.CharacterShow(uid, cid); err != nil {
+				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
+			} else {
+				var payload CharacterShowReply
+				payload.Meta = character
+				payload.OwnerOf = make([]NamedItem, 0)
+				payload.DeputyOf = make([]NamedItem, 0)
+				w.People.CharacterGetCities(cid,
+					func(c *City) {
+						payload.OwnerOf = append(payload.OwnerOf, NamedItem{Name: c.Name, Id: c.Id})
+					},
+					func(c *City) {
+						payload.DeputyOf = append(payload.DeputyOf, NamedItem{Name: c.Name, Id: c.Id})
+					})
+				ctx.JSON(200, &payload)
+			}
+		})
+
+	m.Get("/land/show",
+		func(ctx *macaron.Context) {
+			struid := ctx.Query("uid")
+			strcid := ctx.Query("cid")
+			strlid := ctx.Query("lid")
+			if uid, err := strconv.ParseUint(struid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed User ID"})
+			} else if cid, err := strconv.ParseUint(strcid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Character ID"})
+			} else if lid, err := strconv.ParseUint(strlid, 10, 63); err != nil {
+				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Land ID"})
+			} else if cityView, err := w.People.CityShow(uid, cid, lid); err != nil {
+				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
+			} else {
+				ctx.JSON(200, &cityView)
+			}
+		})
+
 	m.Get("/map/dot", func(ctx *macaron.Context) (int, string) {
 		return 200, w.Places.Dot()
 	})
@@ -83,10 +165,8 @@ func routes(w *World, m *macaron.Macaron) {
 
 func runServer(w *World, north string) error {
 	m := macaron.Classic()
+	m.Use(macaron.Renderer())
 	routes(w, m)
-	m.NotFound(func(ctx *macaron.Context) (int, string) {
-		return 404, ""
-	})
 	return http.ListenAndServe(north, m)
 }
 

@@ -6,34 +6,46 @@
 package world
 
 import (
-	"errors"
 	"sync"
 	"sync/atomic"
 )
 
+const (
+	ResourceMax = 10
+)
+
 type Resources struct {
-	Gold  uint64
-	Wood  uint64
-	Stone uint64
-	Wheat uint64
+	Amounts [ResourceMax]uint64
 }
 
 type ResourcesMultiplier struct {
-	Gold  float32
-	Wood  float32
-	Stone float32
-	Wheat float32
+	Ratios [ResourceMax]float32
 }
 
 type UnitType struct {
 	// Unique Id of the Unit Type
 	Id uint64
 
+	// The number of health point for that type of unit.
+	// A health equal to 0 means the death of the unit.
+	Health uint
+
+	// How afftected is that type of unit by a loss of Health.
+	// Must be between 0 and 1.
+	// 0 means that the capacity of the Unit isn't affected by a health reduction.
+	// 1 means that the capacity of the Unit loses an equal percentage of its capacity
+	// for a loss of health (in other words, a HealthFactor of 1 means that the Unit
+	// will hit at 90% of its maximal power if it has 90% of its health points).
+	HealthFactor float32
+
 	// The display name of the Unit Type
 	Name string
 
 	// Instantiation cost of the current UnitType
-	Cost Resources
+	Build Resources
+
+	//
+	Maintenance Resources
 }
 
 // Both Cell and City must not be 0, and have a non-0 value.
@@ -41,7 +53,10 @@ type Unit struct {
 	// Unique Id of the Unit
 	Id uint64
 
-	// The unique Id of the unit type. It must not be 0.
+	// The number of health points of the unit, Health should be less or equal to HealthMax
+	Health uint
+
+	// A copy of the definition for the current Unit.
 	Type uint64
 
 	// The unique Id of the map cell the current Unit is on.
@@ -85,7 +100,7 @@ type City struct {
 	Owner uint64
 
 	// The unique ID of a second Character in charge of the City.
-	Admin []uint64
+	Deputy uint64
 
 	// The unique ID of the Cell the current City is built on.
 	// This is redundant with the City field in the Cell structure.
@@ -114,13 +129,75 @@ type City struct {
 	Buildings []Building
 }
 
+type CityView struct {
+	// The unique ID of the current City
+	Id uint64
+
+	// The unique ID of the main Character in charge of the City.
+	// The Manager may name a Deputy manager in the City.
+	Owner uint64
+
+	// The unique ID of a second Character in charge of the City.
+	Deputy uint64
+
+	// The unique ID of the Cell the current City is built on.
+	// This is redundant with the City field in the Cell structure.
+	// Both information must match.
+	Cell uint64
+
+	// The display name of the current City
+	Name string
+
+	// Resources stock owned by the current City
+	Stock Resources
+
+	// Resources produced each round by the City, before the enforcing of
+	// Production Boosts ans Production Multipliers
+	Production Resources
+
+	Units []Unit
+
+	Buildings []Building
+}
+
+type Character struct {
+	// The unique identifier of the current Character
+	Id uint64
+
+	// The unique identifier of the only User that controls the Character.
+	User uint64
+
+	// The display name of the current Character
+	Name string
+}
+
+type User struct {
+	// The unique identifier of the current User
+	Id uint64
+
+	// The display name of the current User
+	Name string
+
+	// The unique email that authenticates the User.
+	Email string
+
+	// The hashed password that authenticates the User
+	Password string
+
+	// Has the current User the permission to manage the service.
+	Admin bool
+}
+
 type Politics struct {
+	Users         []User
+	Characters    []Character
 	Cities        []City
 	Units         []Unit
 	UnitTypes     []UnitType
 	BuildingTypes []BuildingType
 
 	NextId uint64
+	Salt   string
 	rw     sync.RWMutex
 }
 
@@ -128,9 +205,15 @@ func (p *Politics) Init() {
 	p.rw.Lock()
 	defer p.rw.Unlock()
 
-	p.NextId = 1
+	if p.NextId <= 0 {
+		p.NextId = 1
+	}
+	p.Users = make([]User, 0)
+	p.Characters = make([]Character, 0)
 	p.Cities = make([]City, 0)
 	p.Units = make([]Unit, 0)
+	p.UnitTypes = make([]UnitType, 0)
+	p.BuildingTypes = make([]BuildingType, 0)
 }
 
 func (p *Politics) ReadLocker() sync.Locker {
@@ -139,15 +222,6 @@ func (p *Politics) ReadLocker() sync.Locker {
 
 func (p *Politics) getNextId() uint64 {
 	return atomic.AddUint64(&p.NextId, 1)
-}
-
-func (p *Politics) GetCity(id uint64) *City {
-	for _, c := range p.Cities {
-		if c.Id == id {
-			return &c
-		}
-	}
-	return nil
 }
 
 func (p *Politics) GetUnit(id uint64) *Unit {
@@ -177,80 +251,9 @@ func (p *Politics) GetBuildingType(id uint64) *BuildingType {
 	return nil
 }
 
-func (p *Politics) HasCity(id uint64) bool {
-	return p.GetCity(id) != nil
-}
+func (p *Politics) Check(w *World) error {
+	p.rw.RLock()
+	defer p.rw.RUnlock()
 
-func (p *Politics) CreateCity(id, loc uint64) error {
-	p.rw.Lock()
-	defer p.rw.Unlock()
-
-	c0 := p.GetCity(id)
-	if c0 != nil {
-		if c0.Deleted {
-			c0.Deleted = false
-			return nil
-		} else {
-			return errors.New("City already exists")
-		}
-	}
-
-	c := City{Id: id, Cell: loc, Units: make([]uint64, 0)}
-	p.Cities = append(p.Cities, c)
-	return nil
-}
-
-func (p *Politics) SpawnUnit(idCity, idType uint64) error {
-	p.rw.Lock()
-	defer p.rw.Unlock()
-
-	c := p.GetCity(idCity)
-	if c == nil {
-		return errors.New("City not found")
-	}
-
-	t := p.GetUnitType(idType)
-	if t == nil {
-		return errors.New("Unit type not found")
-	}
-
-	unit := Unit{Id: p.getNextId(), Type: t.Id, City: c.Id, Cell: 0}
-	p.Units = append(p.Units, unit)
-
-	c.Units = append(c.Units, unit.Id)
-	return nil
-}
-
-func (c *City) GetBuilding(id uint64) *Building {
-	for _, b := range c.Buildings {
-		if id == b.Id {
-			return &b
-		}
-	}
-	return nil
-}
-
-func (p *Politics) SpawnBuilding(idCity, idType uint64) error {
-	p.rw.Lock()
-	defer p.rw.Unlock()
-
-	c := p.GetCity(idCity)
-	if c == nil {
-		return errors.New("City not found")
-	}
-
-	t := p.GetBuildingType(idType)
-	if t == nil {
-		return errors.New("Building tye not found")
-	}
-
-	// TODO(jfs): consume the resources
-
-	b := Building{Id: p.getNextId(), Type: idType}
-	c.Buildings = append(c.Buildings, b)
-	return nil
-}
-
-func (m *Politics) Check(w *World) error {
 	return nil
 }

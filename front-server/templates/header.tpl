@@ -8,3 +8,10 @@
 <link rel="stylesheet" href="/static/style.css"/>
 </head>
 <body>
+<header><h1>Hegemonie</h1></header>
+<nav>
+    {% if Character.Meta.Id %}<a href="/game/character?cid={{ Character.Meta.Id }}">My Character</a>{% endif %}
+    {% if userid %}<a href="/game/user">Character</a>{% endif %}
+    {% if userid %}<a href="/action/logout">Log-Out</a>{% endif %}
+</nav>
+<main>
