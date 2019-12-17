@@ -12,13 +12,15 @@
         ],
         "Cities": [
             {
-                "Id": 4,
-                "Owner": 2,
-                "Deputy": 3,
-                "Cell": 1,
-                "Name": "Fleury-Mérogis",
-                "Stock": {"Amounts":[0,0,0,0,0,0,0,0,0,0]},
-                "Production": {"Amounts":[0,0,0,0,0,0,0,0,0,0]},
+                "Meta": {
+                    "Id": 4,
+                    "Owner": 2,
+                    "Deputy": 3,
+                    "Cell": 1,
+                    "Name": "Fleury-Mérogis",
+                    "Stock": {"Amounts": [0, 0, 0, 0]},
+                    "Production": {"Amounts": [0, 0, 0, 0]}
+                },
                 "Units": [],
                 "Buildings": [
                     {}
@@ -34,16 +36,16 @@
                 "Id": 1,
                 "Health": 100, "HealthFactor": 0.0,
                 "Name": "Troll",
-                "Build": {"Amounts":[0,0,0,0,0,0,0,0,0,0]},
-                "Maintenance": {"Amounts":[0,0,0,0,0,0,0,0,0,0]}
+                "Build": {"Amounts":[0,0,0,0]},
+                "Maintenance": {"Amounts":[0,0,0,0]}
             },
             {
                 "Id": 2,
                 "Health": 100,
                 "HealthFactor": 0.0,
                 "Name": "Golem",
-                "Build": {"Amounts":[0,0,0,0,0,0,0,0,0,0]},
-                "Maintenance": {"Amounts":[0,0,0,0,0,0,0,0,0,0]}
+                "Build": {"Amounts":[0,0,0,0]},
+                "Maintenance": {"Amounts":[0,0,0,0]}
             }
         ],
         "BuildingTypes": [],

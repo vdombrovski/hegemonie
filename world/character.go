@@ -46,9 +46,9 @@ func (p *Politics) CharacterGetCities(id uint64, owner func(*City), deputy func(
 	defer p.rw.RUnlock()
 
 	for _, c := range p.Cities {
-		if c.Owner == id {
+		if c.Meta.Owner == id {
 			owner(&c)
-		} else if c.Deputy == id {
+		} else if c.Meta.Deputy == id {
 			deputy(&c)
 		}
 	}

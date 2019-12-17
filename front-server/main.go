@@ -89,11 +89,11 @@ func (f *front) routePages(m *macaron.Macaron) {
 				ctx.Redirect("/")
 				return
 			}
-			strid := sessid.(string)
-			strcid := ctx.Query("cid")
+			userid := sessid.(string)
+			charid := ctx.Query("cid")
 
 			// Query the World server for the Character
-			resp, err := http.Get("http://" + f.endpointWorld + "/character/show?uid=" + strid + "&cid=" + strcid)
+			resp, err := http.Get("http://" + f.endpointWorld + "/character/show?uid=" + userid + "&cid=" + charid)
 			if err != nil {
 				flash.Warning("Character error: " + err.Error())
 				ctx.Redirect("/")
@@ -108,23 +108,48 @@ func (f *front) routePages(m *macaron.Macaron) {
 				return
 			}
 
-			ctx.Data["userid"] = sessid
+			ctx.Data["userid"] = userid
+			ctx.Data["cid"] = charid
 			ctx.Data["Character"] = &detailCharacter
 			ctx.HTML(200, "character")
 		})
 	m.Get("/game/land",
-		func(ctx *macaron.Context, s session.Store) {
-			userid := s.Get("userid")
+		func(ctx *macaron.Context, sess session.Store, flash *session.Flash) {
+			// Validate the input
+			sessid := sess.Get("userid")
+			if sessid == nil {
+				flash.Error("Invalid session")
+				ctx.Redirect("/")
+				return
+			}
+			userid := sessid.(string)
 			charid := ctx.Query("cid")
 			landid := ctx.Query("lid")
 			if userid == "" || charid == "" || landid == "" {
 				ctx.Redirect("/")
-			} else {
-				ctx.Data["userid"] = userid
-				ctx.Data["cid"] = charid
-				ctx.Data["lid"] = landid
-				ctx.HTML(200, "land")
+				return
 			}
+
+			// Query the World server for the Character
+			resp, err := http.Get("http://" + f.endpointWorld + "/land/show?uid=" + userid + "&cid=" + charid + "&lid=" + landid)
+			if err != nil {
+				flash.Warning("Character error: " + err.Error())
+				ctx.Redirect("/")
+				return
+			}
+			// Unpack the character
+			var detailLand CityShowReply
+			if err = json.NewDecoder(resp.Body).Decode(&detailLand); err != nil {
+				flash.Error("World problem: " + err.Error())
+				ctx.Redirect("/")
+				return
+			}
+
+			ctx.Data["userid"] = userid
+			ctx.Data["cid"] = charid
+			ctx.Data["lid"] = landid
+			ctx.Data["Land"] = detailLand
+			ctx.HTML(200, "land")
 		})
 	m.Get("/game/map",
 		func(ctx *macaron.Context, s session.Store) {

@@ -106,10 +106,10 @@ func routes(w *World, m *macaron.Macaron) {
 				payload.DeputyOf = make([]NamedItem, 0)
 				w.People.CharacterGetCities(cid,
 					func(c *City) {
-						payload.OwnerOf = append(payload.OwnerOf, NamedItem{Name: c.Name, Id: c.Id})
+						payload.OwnerOf = append(payload.OwnerOf, NamedItem{Name: c.Meta.Name, Id: c.Meta.Id})
 					},
 					func(c *City) {
-						payload.DeputyOf = append(payload.DeputyOf, NamedItem{Name: c.Name, Id: c.Id})
+						payload.DeputyOf = append(payload.DeputyOf, NamedItem{Name: c.Meta.Name, Id: c.Meta.Id})
 					})
 				ctx.JSON(200, &payload)
 			}
@@ -129,7 +129,11 @@ func routes(w *World, m *macaron.Macaron) {
 			} else if cityView, err := w.People.CityShow(uid, cid, lid); err != nil {
 				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
 			} else {
-				ctx.JSON(200, &cityView)
+				var payload CityShowReply
+				payload.Meta = cityView.Core
+				payload.Units = make([]NamedItem, 0)
+				payload.Buildings = make([]NamedItem, 0)
+				ctx.JSON(200, &payload)
 			}
 		})
 

@@ -1,15 +1,19 @@
 {% include "header.tpl" %}
 
-<h2>Hello, {{Character.Name}}</h2>
-<p>Check <a href="/game/character?pid={{Character.Id}}">your profile</a></p>
+<h2>You are in {{Land.Meta.Name}}</h2>
+<p><a href="/game/land?lid={{Land.Meta.Id}}">City</a></p>
 
-<h2>You are in {{Land.Name}}</h2>
-<p><a href="/game/land?lid={{Land.Id}}">City</a></p>
-
-<h2>Your Production</h2>
+<h2>Production</h2>
 <ul>
-    {% for r in Land.Production %}
-    <li>{{r.Amount}} {{r.Name}}</li>
+    {% for r in Land.Meta.Production.Amounts %}
+    <li>{{r}}</li>
+    {% endfor %}
+</ul>
+
+<h2>Stock</h2>
+<ul>
+    {% for r in Land.Meta.Stock.Amounts %}
+    <li>{{r}}</li>
     {% endfor %}
 </ul>
 

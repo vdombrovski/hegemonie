@@ -36,6 +36,7 @@ type CharacterShowReply struct {
 }
 
 type CityShowReply struct {
-	Meta    world.City
-	Defence []NamedItem
+	Meta      world.CityCore
+	Units     []NamedItem
+	Buildings []NamedItem
 }

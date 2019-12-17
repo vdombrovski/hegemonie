@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ResourceMax = 10
+	ResourceMax = 4
 )
 
 type Resources struct {
@@ -91,7 +91,7 @@ type Building struct {
 	Type uint64
 }
 
-type City struct {
+type CityCore struct {
 	// The unique ID of the current City
 	Id uint64
 
@@ -110,16 +110,18 @@ type City struct {
 	// The display name of the current City
 	Name string
 
-	// Tells if the City structure is usable. A deleted City generates "Not Found"
-	// errors.
-	Deleted bool
-
 	// Resources stock owned by the current City
 	Stock Resources
 
 	// Resources produced each round by the City, before the enforcing of
 	// Production Boosts ans Production Multipliers
 	Production Resources
+}
+
+type City struct {
+	Meta CityCore
+
+	Deleted bool
 
 	// An array of Units guarding the current City.
 	// This is redundant with the City field of the Unit type.
@@ -130,30 +132,7 @@ type City struct {
 }
 
 type CityView struct {
-	// The unique ID of the current City
-	Id uint64
-
-	// The unique ID of the main Character in charge of the City.
-	// The Manager may name a Deputy manager in the City.
-	Owner uint64
-
-	// The unique ID of a second Character in charge of the City.
-	Deputy uint64
-
-	// The unique ID of the Cell the current City is built on.
-	// This is redundant with the City field in the Cell structure.
-	// Both information must match.
-	Cell uint64
-
-	// The display name of the current City
-	Name string
-
-	// Resources stock owned by the current City
-	Stock Resources
-
-	// Resources produced each round by the City, before the enforcing of
-	// Production Boosts ans Production Multipliers
-	Production Resources
+	Core CityCore
 
 	Units []Unit
 

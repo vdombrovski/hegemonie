@@ -18,18 +18,12 @@ func (p *Politics) CityShow(userId, characterId, cityId uint64) (CityView, error
 	pChar := p.CharacterGet(characterId)
 	if pCity == nil || pChar == nil {
 		err = errors.New("Not Found")
-	} else if pCity.Deputy != characterId && pCity.Owner != characterId {
+	} else if pCity.Meta.Deputy != characterId && pCity.Meta.Owner != characterId {
 		err = errors.New("Forbidden")
 	} else if pChar.User != userId {
 		err = errors.New("Forbidden")
 	} else {
-		result.Id = pCity.Id
-		result.Owner = pCity.Owner
-		result.Deputy = pCity.Deputy
-		result.Cell = pCity.Cell
-		result.Name = pCity.Name
-		result.Stock = pCity.Stock
-		result.Production = pCity.Production
+		result.Core = pCity.Meta
 		result.Buildings = pCity.Buildings
 		result.Units = make([]Unit, len(pCity.Units), len(pCity.Units))
 	}
@@ -39,7 +33,7 @@ func (p *Politics) CityShow(userId, characterId, cityId uint64) (CityView, error
 
 func (p *Politics) CityGet(id uint64) *City {
 	for _, c := range p.Cities {
-		if c.Id == id {
+		if c.Meta.Id == id {
 			return &c
 		}
 	}
@@ -64,7 +58,7 @@ func (p *Politics) CityCreate(id, loc uint64) error {
 		}
 	}
 
-	c := City{Id: id, Cell: loc, Units: make([]uint64, 0)}
+	c := City{Meta: CityCore{Id: id, Cell: loc}, Units: make([]uint64, 0)}
 	p.Cities = append(p.Cities, c)
 	return nil
 }
