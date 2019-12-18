@@ -6,6 +6,8 @@
 package main
 
 import (
+	"../common/mapper"
+	. "../world-client"
 	"encoding/json"
 	"flag"
 	"github.com/go-macaron/binding"
@@ -19,8 +21,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	. "../world-client"
-	"../common/mapper"
 )
 
 type LoginForm struct {

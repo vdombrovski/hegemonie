@@ -9,44 +9,33 @@
         },
         {
             "Id": 2,
+            "Name": "Gildas Lamballay",
+            "Email": "gildas@hegemonie.be",
+            "Password": ":",
+            "Inactive": true
+        },
+        {
+            "Id": 3,
             "Name": "jfsmig",
-            "Admin": false,
             "Email": "jfsmig@hegemonie.be",
             "Password": ":plop"
         }
     ],
     "Characters": [
-        {
-            "Id": 2,
-            "User": 1,
-            "Name": "Ra"
-        },
-        {
-            "Id": 3,
-            "User": 1,
-            "Name": "Seth"
-        }
+        { "Id": 1, "User": 1, "Name": "Ra" },
+        { "Id": 2, "User": 1, "Name": "Seth" },
+        { "Id": 3, "User": 1, "Name": "Vishnu" }
     ],
     "Cities": [
         {
             "Meta": {
-                "Id": 4,
-                "Owner": 2,
-                "Deputy": 3,
+                "Id": 1,
                 "Cell": 1,
+                "Owner": 1,
+                "Deputy": 2,
                 "Name": "Fleury-Mérogis",
-                "Stock": [
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "Production": [
-                    0,
-                    0,
-                    0,
-                    0
-                ]
+                "Stock": [ 0, 0, 0, 0 ],
+                "Production": [ 0, 0, 0, 0 ]
             },
             "Units": [],
             "Buildings": [
@@ -55,81 +44,34 @@
         }
     ],
     "Units": [
-        {
-            "Id": 1,
-            "Health": 100,
-            "Type": 1,
-            "Cell": 0,
-            "City": 1
-        },
-        {
-            "Id": 2,
-            "Health": 100,
-            "Type": 2,
-            "Cell": 0,
-            "City": 1
-        }
+        { "Id": 1, "Health": 100, "Type": 1, "Cell": 0, "City": 1 },
+        { "Id": 2, "Health": 100, "Type": 2, "Cell": 0, "City": 1 }
     ],
     "UnitTypes": [
         {
             "Id": 1,
+            "Name": "Troll",
             "Health": 100,
             "HealthFactor": 0.0,
-            "Name": "Troll",
-            "Build": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "Maintenance": [
-                0,
-                0,
-                0,
-                0
-            ]
+            "Build": [ 0, 0, 0, 0 ],
+            "Maintenance": [ 0, 0, 0, 0 ]
         },
         {
             "Id": 2,
+            "Name": "Golem",
             "Health": 100,
             "HealthFactor": 0.0,
-            "Name": "Golem",
-            "Build": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "Maintenance": [
-                0,
-                0,
-                0,
-                0
-            ]
+            "Build": [ 0, 0, 0, 0 ],
+            "Maintenance": [ 0, 0, 0, 0 ]
         }
     ],
     "BuildingTypes": [
         {
             "Id": 1,
             "Name": "Étable",
-            "Multiplier": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "Boost": [
-                0,
-                0,
-                0,
-                0
-            ],
-            "BuildingCost": [
-                0,
-                0,
-                0,
-                0
-            ]
+            "Multiplier": [ 1.0, 1.0, 1.0, 1.0 ],
+            "Boost": [ 0, 0, 0, 0 ],
+            "BuildingCost": [ 0, 0, 0, 0 ]
         }
     ],
     "NextId": 1,

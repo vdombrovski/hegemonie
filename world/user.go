@@ -98,7 +98,21 @@ func validMail(m string) bool {
 	return len(m) > 0
 }
 
-func validPass(m string) bool {
+func validPass(p string) bool {
 	// TODO(jfs): Not yet implemented
-	return len(m) > 0
+	return len(p) > 0
+}
+
+func (s *SetOfUsers) Len() int {
+	return len(*s)
+}
+
+func (s *SetOfUsers) Less(i, j int) bool {
+	return (*s)[i].Id < (*s)[j].Id
+}
+
+func (s *SetOfUsers) Swap(i, j int) {
+	tmp := (*s)[i]
+	(*s)[i] = (*s)[j]
+	(*s)[j] = tmp
 }

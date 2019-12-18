@@ -7,7 +7,10 @@ package world
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
+	"sort"
 	"sync"
 	"sync/atomic"
 )
@@ -162,13 +165,21 @@ type User struct {
 	Password string
 
 	// Has the current User the permission to manage the service.
-	Admin bool
+	Admin bool `json:",omitempty"`
+
+	Inactive bool `json:",omitempty"`
 }
 
+type SetOfUsers []User
+
+type SetOfCharacters []Character
+
+type SetOfCities []City
+
 type World struct {
-	Users         []User
-	Characters    []Character
-	Cities        []City
+	Users         SetOfUsers
+	Characters    SetOfCharacters
+	Cities        SetOfCities
 	Units         []Unit
 	UnitTypes     []UnitType
 	BuildingTypes []BuildingType
@@ -198,8 +209,40 @@ func (w *World) Init() {
 }
 
 func (w *World) Check() error {
-		return w.Places.Check(w)
+	var err error
+	err = w.Places.Check(w)
+	if err != nil {
+		return err
+	}
 
+	if !sort.IsSorted(&w.Users) {
+		return errors.New("User sequence: unsorted")
+	}
+	for i, u := range w.Users {
+		if uint64(i)+1 != u.Id {
+			return errors.New(fmt.Sprintf("User sequence: hole at %d", i))
+		}
+	}
+
+	if !sort.IsSorted(&w.Characters) {
+		return errors.New("Character sequence: unsorted")
+	}
+	for i, c := range w.Characters {
+		if uint64(i)+1 != c.Id {
+			return errors.New(fmt.Sprintf("Character sequence: hole at %d", i))
+		}
+	}
+
+	if !sort.IsSorted(&w.Cities) {
+		return errors.New("City sequence: unsorted")
+	}
+	for i, c := range w.Cities {
+		if uint64(i)+1 != c.Meta.Id {
+			return errors.New(fmt.Sprintf("City sequence: hole at %d", i))
+		}
+	}
+
+	return nil
 }
 
 func (p *World) ReadLocker() sync.Locker {
@@ -215,5 +258,12 @@ func (w *World) DumpJSON(dst io.Writer) error {
 }
 
 func (w *World) LoadJSON(src io.Reader) error {
-	return json.NewDecoder(src).Decode(w)
+	err := json.NewDecoder(src).Decode(w)
+	if err != nil {
+		return err
+	}
+	sort.Sort(&w.Users)
+	sort.Sort(&w.Characters)
+	sort.Sort(&w.Cities)
+	return nil
 }

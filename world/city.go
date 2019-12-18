@@ -113,3 +113,17 @@ func (p *World) CitySpawnBuilding(idCity, idType uint64) error {
 	c.Buildings = append(c.Buildings, b)
 	return nil
 }
+
+func (s *SetOfCities) Len() int {
+	return len(*s)
+}
+
+func (s *SetOfCities) Less(i, j int) bool {
+	return (*s)[i].Meta.Id < (*s)[j].Meta.Id
+}
+
+func (s *SetOfCities) Swap(i, j int) {
+	tmp := (*s)[i]
+	(*s)[i] = (*s)[j]
+	(*s)[j] = tmp
+}

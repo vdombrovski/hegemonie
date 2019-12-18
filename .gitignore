@@ -1,1 +1,10 @@
+# Jetbrain's IDE context
 .idea
+
+# Vim temporary files
+**/.*.sw?
+
+# Binary tools
+hege-front
+hege-world
+hege-ticker

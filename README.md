@@ -4,14 +4,13 @@ Hegemonie is an online management, strategy and diplomacy RPG. The current
 repository is a reboot of what [Hegemonie](http://www.hegemonie.be) was
 between 1999 and 2003. It is under heavily inactive construction.
 
-A Web interface...
-* manages the authentication of the players
-* displays the status of the country managed by each player
-* proposes actions to evolve in the world.
+A Web interface manages the authentication of the players, displays the
+status of the country managed by each player and proposes actions (as HTML forms)
+to mpact the world.
 
 Meanwhile, the game engine is managed by a standalone daemon that makes
-the world evolve at periodical ticks: long term actions progress a bit toward
-their completion, the movements are executed, attacks started, resources
+the world evolve with external triggers: long term actions progress a bit
+toward their completion, the movements are executed, attacks started, resources
 produced, etc etc.
 
 Technical facts:
@@ -23,22 +22,30 @@ Technical facts:
    alive, it periodically persist its state and restore it at the startup.
    The status is written in [JSON](https://json.org) to ease the daily
    administration.
-3. Notifications are emitted upon special events in the game, they are managed
-   by a [Redis](https://redis.io) service.
+3. Notifications will be emitted upon special events in the game.
+   No technical solution has been chosen yet.
+   It is likely to be split into a collect by either [Redis](https://redis.io),
+   [Kafka](https://kafka.apache.org) or [Beanstalkd](https://beanstalkd.github.io),
+   and then forwarded to any IM (instant messenging) application like
+   [Discord](https://discord.io/), [Slack](https://slack.com),
+   [RocketChat](https://rocket.chat), [Riot](https://riot.im) or whatever.
 
 A game instance for a small community is lightweight enough to run on a small
 ARM-based board.
 
-Architecture:
-* ``haproxy`` as an SSL termination frontend.
+## Architecture
+
 * **hege-front** serves HTTP pages for the human beings
 * **hege-world** manage the game's world through a simple HTTP/JSON API
 * **hege-ticker** triggers the rounds in the game's world.
-* ``redis-server``
+* ``haproxy`` is OPTIONAL but recommanded as an SSL termination frontend.
+* ``cron`` is OPTINAL but recommanded to trigger the ticker.
 
-The configuration is very simple:
-* A central configuration file for **hege-front**, **hege-world** and
-  **hege-ticker**
-* A standard configuration file for **redis**
-* The ``crontab`` configuration to trigger the ticker.
+### Scalability
+
+This is not the topic yet.
+
+However there are a few opportunities:
+* The front service is stateless, you might deploy many of them.
+* The world service is stateful and it manages all the game entities.
 

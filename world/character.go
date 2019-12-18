@@ -53,3 +53,17 @@ func (w *World) CharacterGetCities(id uint64, owner func(*City), deputy func(*Ci
 		}
 	}
 }
+
+func (s *SetOfCharacters) Len() int {
+	return len(*s)
+}
+
+func (s *SetOfCharacters) Less(i, j int) bool {
+	return (*s)[i].Id < (*s)[j].Id
+}
+
+func (s *SetOfCharacters) Swap(i, j int) {
+	tmp := (*s)[i]
+	(*s)[i] = (*s)[j]
+	(*s)[j] = tmp
+}
