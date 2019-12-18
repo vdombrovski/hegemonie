@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 	. "../world-client"
-	"hegemonie/common/mapper"
+	"../common/mapper"
 )
 
 type LoginForm struct {

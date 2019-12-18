@@ -5,14 +5,14 @@
 
 <h2>Production</h2>
 <ul>
-    {% for r in Land.Meta.Production.Amounts %}
+    {% for r in Land.Meta.Production %}
     <li>{{r}}</li>
     {% endfor %}
 </ul>
 
 <h2>Stock</h2>
 <ul>
-    {% for r in Land.Meta.Stock.Amounts %}
+    {% for r in Land.Meta.Stock %}
     <li>{{r}}</li>
     {% endfor %}
 </ul>

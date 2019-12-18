@@ -1,60 +1,142 @@
 {
-    "People": {
-        "Users": [
-            { "Id": 1, "Name": "root", "Admin": true,
-              "Email": "admin@hegemonie.be", "Password": ":plop" },
-            { "Id": 2, "Name": "jfsmig", "Admin": false,
-              "Email": "jfsmig@hegemonie.be", "Password": ":plop" }
-        ],
-        "Characters": [
-            {"Id": 2, "User": 1, "Name": "Ra"},
-            {"Id": 3, "User": 1, "Name":  "Seth"}
-        ],
-        "Cities": [
-            {
-                "Meta": {
-                    "Id": 4,
-                    "Owner": 2,
-                    "Deputy": 3,
-                    "Cell": 1,
-                    "Name": "Fleury-Mérogis",
-                    "Stock": {"Amounts": [0, 0, 0, 0]},
-                    "Production": {"Amounts": [0, 0, 0, 0]}
-                },
-                "Units": [],
-                "Buildings": [
-                    {}
+    "Users": [
+        {
+            "Id": 1,
+            "Name": "root",
+            "Admin": true,
+            "Email": "admin@hegemonie.be",
+            "Password": ":plop"
+        },
+        {
+            "Id": 2,
+            "Name": "jfsmig",
+            "Admin": false,
+            "Email": "jfsmig@hegemonie.be",
+            "Password": ":plop"
+        }
+    ],
+    "Characters": [
+        {
+            "Id": 2,
+            "User": 1,
+            "Name": "Ra"
+        },
+        {
+            "Id": 3,
+            "User": 1,
+            "Name": "Seth"
+        }
+    ],
+    "Cities": [
+        {
+            "Meta": {
+                "Id": 4,
+                "Owner": 2,
+                "Deputy": 3,
+                "Cell": 1,
+                "Name": "Fleury-Mérogis",
+                "Stock": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "Production": [
+                    0,
+                    0,
+                    0,
+                    0
                 ]
-            }
-        ],
-        "Units": [
-            {"Id": 1, "Health": 100, "Type": 1, "Cell": 0, "City": 1},
-            {"Id": 2, "Health": 100, "Type": 2, "Cell": 0, "City": 1}
-        ],
-        "UnitTypes": [
-            {
-                "Id": 1,
-                "Health": 100, "HealthFactor": 0.0,
-                "Name": "Troll",
-                "Build": {"Amounts":[0,0,0,0]},
-                "Maintenance": {"Amounts":[0,0,0,0]}
             },
-            {
-                "Id": 2,
-                "Health": 100,
-                "HealthFactor": 0.0,
-                "Name": "Golem",
-                "Build": {"Amounts":[0,0,0,0]},
-                "Maintenance": {"Amounts":[0,0,0,0]}
-            }
-        ],
-        "BuildingTypes": [],
-        "NextId": 1,
-        "Salt": ""
-    },
-    "Places":{
-        "Cells":[],
-        "Roads":[],
-        "NextId":2
+            "Units": [],
+            "Buildings": [
+                {"Id": 1, "Type": 1}
+            ]
+        }
+    ],
+    "Units": [
+        {
+            "Id": 1,
+            "Health": 100,
+            "Type": 1,
+            "Cell": 0,
+            "City": 1
+        },
+        {
+            "Id": 2,
+            "Health": 100,
+            "Type": 2,
+            "Cell": 0,
+            "City": 1
+        }
+    ],
+    "UnitTypes": [
+        {
+            "Id": 1,
+            "Health": 100,
+            "HealthFactor": 0.0,
+            "Name": "Troll",
+            "Build": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "Maintenance": [
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "Id": 2,
+            "Health": 100,
+            "HealthFactor": 0.0,
+            "Name": "Golem",
+            "Build": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "Maintenance": [
+                0,
+                0,
+                0,
+                0
+            ]
+        }
+    ],
+    "BuildingTypes": [
+        {
+            "Id": 1,
+            "Name": "Étable",
+            "Multiplier": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Boost": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "BuildingCost": [
+                0,
+                0,
+                0,
+                0
+            ]
+        }
+    ],
+    "NextId": 1,
+    "Salt": "",
+    "Places": {
+        "Cells": [],
+        "Roads": [],
+        "NextId": 2
     }
 }

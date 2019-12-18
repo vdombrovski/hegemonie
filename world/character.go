@@ -9,9 +9,9 @@ import (
 	"errors"
 )
 
-func (p *Politics) CharacterGet(cid uint64) *Character {
+func (w *World) CharacterGet(cid uint64) *Character {
 	// TODO(jfs): lookup in the sorted array
-	for _, c := range p.Characters {
+	for _, c := range w.Characters {
 		if c.Id == cid {
 			return &c
 		}
@@ -19,15 +19,15 @@ func (p *Politics) CharacterGet(cid uint64) *Character {
 	return nil
 }
 
-func (p *Politics) CharacterShow(uid, cid uint64) (Character, error) {
+func (w *World) CharacterShow(uid, cid uint64) (Character, error) {
 	if cid <= 0 || uid <= 0 {
 		return Character{}, errors.New("EINVAL")
 	}
 
-	p.rw.RLock()
-	defer p.rw.RUnlock()
+	w.rw.RLock()
+	defer w.rw.RUnlock()
 
-	if pChar := p.CharacterGet(cid); pChar == nil {
+	if pChar := w.CharacterGet(cid); pChar == nil {
 		return Character{}, errors.New("Not Found")
 	} else if pChar.User != uid {
 		return Character{}, errors.New("Forbidden")
@@ -37,15 +37,15 @@ func (p *Politics) CharacterShow(uid, cid uint64) (Character, error) {
 }
 
 // Notify the caller of the cities managed by the given Character.
-func (p *Politics) CharacterGetCities(id uint64, owner func(*City), deputy func(*City)) {
+func (w *World) CharacterGetCities(id uint64, owner func(*City), deputy func(*City)) {
 	if id <= 0 {
 		return
 	}
 
-	p.rw.RLock()
-	defer p.rw.RUnlock()
+	w.rw.RLock()
+	defer w.rw.RUnlock()
 
-	for _, c := range p.Cities {
+	for _, c := range w.Cities {
 		if c.Meta.Owner == id {
 			owner(&c)
 		} else if c.Meta.Deputy == id {

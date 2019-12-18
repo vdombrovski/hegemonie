@@ -11,7 +11,7 @@ import (
 	"errors"
 )
 
-func (p *Politics) UserCreate(mail, pass string) (uint64, error) {
+func (p *World) UserCreate(mail, pass string) (uint64, error) {
 	if !validMail(mail) || !validPass(pass) {
 		return 0, errors.New("EINVAL")
 	}
@@ -32,7 +32,7 @@ func (p *Politics) UserCreate(mail, pass string) (uint64, error) {
 	return id, nil
 }
 
-func (p *Politics) UserGet(id uint64) (User, error) {
+func (p *World) UserGet(id uint64) (User, error) {
 	if id <= 0 {
 		return User{}, errors.New("EINVAL")
 	}
@@ -52,7 +52,7 @@ func (p *Politics) UserGet(id uint64) (User, error) {
 	return User{}, errors.New("User not found")
 }
 
-func (p *Politics) UserAuth(mail, pass string) (uint64, error) {
+func (p *World) UserAuth(mail, pass string) (uint64, error) {
 	if mail == "" || pass == "" {
 		return 0, errors.New("EINVAL")
 	}
@@ -78,7 +78,7 @@ func (p *Politics) UserAuth(mail, pass string) (uint64, error) {
 	return 0, errors.New("User not found")
 }
 
-func (p *Politics) UserGetCharacters(id uint64, hook func(*Character)) {
+func (p *World) UserGetCharacters(id uint64, hook func(*Character)) {
 	for _, c := range p.Characters {
 		if c.User == id {
 			hook(&c)
@@ -86,7 +86,7 @@ func (p *Politics) UserGetCharacters(id uint64, hook func(*Character)) {
 	}
 }
 
-func (p *Politics) hashPassword(pass string) string {
+func (p *World) hashPassword(pass string) string {
 	checksum := sha256.New()
 	checksum.Write([]byte(p.Salt))
 	checksum.Write([]byte(pass))

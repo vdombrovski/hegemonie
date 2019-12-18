@@ -61,7 +61,7 @@ type AuthRequest struct {
 func routes(w *World, m *macaron.Macaron) {
 	m.Post("/user/auth", binding.Bind(AuthRequest{}),
 		func(ctx *macaron.Context, form AuthRequest) {
-			id, err := w.People.UserAuth(form.UserMail, form.UserPass)
+			id, err := w.UserAuth(form.UserMail, form.UserPass)
 			if id != 0 {
 				ctx.JSON(200, AuthReply{Id: id})
 			} else if err == nil {
@@ -76,13 +76,13 @@ func routes(w *World, m *macaron.Macaron) {
 			struid := ctx.Query("uid")
 			if id, err := strconv.ParseUint(struid, 10, 63); err != nil {
 				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed User ID"})
-			} else if user, err := w.People.UserGet(id); err != nil {
+			} else if user, err := w.UserGet(id); err != nil {
 				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
 			} else {
 				var payload UserShowReply
 				payload.Characters = make([]NamedItem, 0)
 				payload.Meta = user
-				w.People.UserGetCharacters(id, func(c *Character) {
+				w.UserGetCharacters(id, func(c *Character) {
 					payload.Characters = append(payload.Characters, NamedItem{Name: c.Name, Id: c.Id})
 				})
 				ctx.JSON(200, &payload)
@@ -97,14 +97,14 @@ func routes(w *World, m *macaron.Macaron) {
 				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed User ID"})
 			} else if cid, err := strconv.ParseUint(strcid, 10, 63); err != nil {
 				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Character ID"})
-			} else if character, err := w.People.CharacterShow(uid, cid); err != nil {
+			} else if character, err := w.CharacterShow(uid, cid); err != nil {
 				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
 			} else {
 				var payload CharacterShowReply
 				payload.Meta = character
 				payload.OwnerOf = make([]NamedItem, 0)
 				payload.DeputyOf = make([]NamedItem, 0)
-				w.People.CharacterGetCities(cid,
+				w.CharacterGetCities(cid,
 					func(c *City) {
 						payload.OwnerOf = append(payload.OwnerOf, NamedItem{Name: c.Meta.Name, Id: c.Meta.Id})
 					},
@@ -126,7 +126,7 @@ func routes(w *World, m *macaron.Macaron) {
 				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Character ID"})
 			} else if lid, err := strconv.ParseUint(strlid, 10, 63); err != nil {
 				ctx.JSON(400, ErrorReply{Code: 400, Msg: "Malformed Land ID"})
-			} else if cityView, err := w.People.CityShow(uid, cid, lid); err != nil {
+			} else if cityView, err := w.CityShow(uid, cid, lid); err != nil {
 				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
 			} else {
 				var payload CityShowReply

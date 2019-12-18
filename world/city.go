@@ -7,7 +7,7 @@ package world
 
 import "errors"
 
-func (p *Politics) CityShow(userId, characterId, cityId uint64) (CityView, error) {
+func (p *World) CityShow(userId, characterId, cityId uint64) (CityView, error) {
 	p.rw.RLock()
 	defer p.rw.RUnlock()
 
@@ -31,7 +31,7 @@ func (p *Politics) CityShow(userId, characterId, cityId uint64) (CityView, error
 	return result, err
 }
 
-func (p *Politics) CityGet(id uint64) *City {
+func (p *World) CityGet(id uint64) *City {
 	for _, c := range p.Cities {
 		if c.Meta.Id == id {
 			return &c
@@ -40,11 +40,11 @@ func (p *Politics) CityGet(id uint64) *City {
 	return nil
 }
 
-func (p *Politics) CityCheck(id uint64) bool {
+func (p *World) CityCheck(id uint64) bool {
 	return p.CityGet(id) != nil
 }
 
-func (p *Politics) CityCreate(id, loc uint64) error {
+func (p *World) CityCreate(id, loc uint64) error {
 	p.rw.Lock()
 	defer p.rw.Unlock()
 
@@ -63,7 +63,7 @@ func (p *Politics) CityCreate(id, loc uint64) error {
 	return nil
 }
 
-func (p *Politics) CitySpawnUnit(idCity, idType uint64) error {
+func (p *World) CitySpawnUnit(idCity, idType uint64) error {
 	p.rw.Lock()
 	defer p.rw.Unlock()
 
@@ -93,7 +93,7 @@ func (c *City) CityGetBuilding(id uint64) *Building {
 	return nil
 }
 
-func (p *Politics) CitySpawnBuilding(idCity, idType uint64) error {
+func (p *World) CitySpawnBuilding(idCity, idType uint64) error {
 	p.rw.Lock()
 	defer p.rw.Unlock()
 
