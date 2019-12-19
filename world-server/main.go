@@ -130,9 +130,18 @@ func routes(w *World, m *macaron.Macaron) {
 				ctx.JSON(404, ErrorReply{Code: 400, Msg: err.Error()})
 			} else {
 				var payload CityShowReply
+				log.Println("cityView:", cityView)
 				payload.Meta = cityView.Core
 				payload.Units = make([]NamedItem, 0)
+				for _, u := range cityView.Units {
+					payload.Units = append(payload.Units,
+						NamedItem{Id: u.Id, Name: w.GetUnitType(u.Type).Name})
+				}
 				payload.Buildings = make([]NamedItem, 0)
+				for _, b := range cityView.Buildings {
+					payload.Buildings = append(payload.Buildings,
+						NamedItem{Id: b.Id, Name: w.GetBuildingType(b.Type).Name})
+				}
 				ctx.JSON(200, &payload)
 			}
 		})

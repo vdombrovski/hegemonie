@@ -25,7 +25,10 @@ func (p *World) CityShow(userId, characterId, cityId uint64) (CityView, error) {
 	} else {
 		result.Core = pCity.Meta
 		result.Buildings = pCity.Buildings
-		result.Units = make([]Unit, len(pCity.Units), len(pCity.Units))
+		result.Units = make([]Unit, 0, len(pCity.Units))
+		for _, u := range pCity.Units {
+			result.Units = append(result.Units, *p.GetUnit(u))
+		}
 	}
 
 	return result, err
