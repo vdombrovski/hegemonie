@@ -17,8 +17,8 @@ import (
 	"strconv"
 	"time"
 
-	. "../world"
-	. "../world-client"
+	. "hegemonie/world"
+	. "hegemonie/world-client"
 )
 
 var (
@@ -173,6 +173,14 @@ func routes(w *World, m *macaron.Macaron) {
 		} else {
 			return 501, err.Error()
 		}
+	})
+
+	// Mapping routes
+	m.Get("/world/places", func(ctx *macaron.Context) {
+		ctx.JSON(200, &w.Places)
+	})
+	m.Get("/world/cities", func(ctx *macaron.Context) {
+		ctx.JSON(200, &w.Cities)
 	})
 }
 

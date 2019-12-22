@@ -6,7 +6,7 @@
 package world_client
 
 import (
-	"../world"
+	"hegemonie/world"
 )
 
 type ErrorReply struct {

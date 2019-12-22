@@ -34,6 +34,9 @@ type MapCell struct {
 
 	// An array of the the Id of the Unit that are present on the cell.
 	Units []uint64
+
+	// Biome in which the cell is
+	Biome uint64
 }
 
 type SetOfCells []MapCell

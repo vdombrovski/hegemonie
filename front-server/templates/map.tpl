@@ -6,11 +6,23 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 -->
 {% include "header_map.tpl" %}
 <script>
+
+    var map = "{{ map }}"
+    var cities = "{{ cities }}"
+
     function getTileStyle(tile) {
         tile--;
         var x = (tile % 20) * 5.25;
         var y = Math.floor(tile/20) * 5.25;
         return 'background-position:' + x + '% ' + y + '%'
+    }
+
+    function getCityInfo(id) {
+        for (cid in cities) {
+            if (cities[cid].Meta.Id == id) {
+                return cities[cid]
+            }
+        }
     }
 
     function enablePanDrag() {
@@ -29,24 +41,22 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
       });
     }
 
-    $(document).ready(function() {
-        var map = "{{ map }}"
-        map = JSON.parse(map.replace(/&quot;/g, '\"'))
-        var overlay = "{{ overlay }}"
-        overlay = JSON.parse(overlay.replace(/&quot;/g, '\"'))
 
-        console.log(overlay)
+    $(document).ready(function() {
+        map = JSON.parse(map.replace(/&quot;/g, '\"'))
+        cities = JSON.parse(cities.replace(/&quot;/g, '\"'));
 
         canvas = $("#canvas")
-        for (idx in map) {
-            toAppend = "<div class='tile' style='" + getTileStyle(map[idx].Terrain) + "'>";
-            if (overlay[idx].Terrain > 0)
-                toAppend += "<div class='overlay' style='" + getTileStyle(overlay[idx].Terrain) + "'></div>"
-
+        for (idx in map.Cells) {
+            toAppend = "<div class='tile' style='" + getTileStyle(map.Cells[idx].Biome) + "'>";
+            if (map.Cells[idx].City > 0) {
+                toAppend += "<div class='city' style='" + getTileStyle(121) + "'>" +
+                    "<span class='cityName'>" + getCityInfo(map.Cells[idx].City).Meta.Name + "</span>"
+                + "</div>"
+            }
             toAppend += "</div>"
             canvas.append(toAppend)
         }
-
 
         enablePanDrag()
     })
@@ -57,4 +67,3 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
     </div>
 </div>
-{% include "footer.tpl" %}

@@ -19,21 +19,43 @@
             "Name": "jfsmig",
             "Email": "jfsmig@hegemonie.be",
             "Password": ":plop"
+        },
+        {
+            "Id": 4,
+            "Name": "korween",
+            "Email": "jfsmig@hegemonie.be",
+            "Password": ":plop"
         }
     ],
     "Characters": [
         { "Id": 1, "User": 1, "Name": "Ra" },
         { "Id": 2, "User": 1, "Name": "Seth" },
-        { "Id": 3, "User": 1, "Name": "Vishnu" }
+        { "Id": 3, "User": 1, "Name": "Vishnu" },
+        { "Id": 4, "User": 4, "Name": "Grognar" }
     ],
     "Cities": [
         {
             "Meta": {
                 "Id": 1,
                 "Cell": 1,
+                "Owner": 4,
+                "Deputy": 4,
+                "Name": "Fleury-Mérogis",
+                "Stock": [ 0, 0, 0, 0 ],
+                "Production": [ 0, 0, 0, 0 ]
+            },
+            "Units": [1, 2, 3],
+            "Buildings": [
+                {"Id": 1, "Type": 1}
+            ]
+        },
+        {
+            "Meta": {
+                "Id": 2,
+                "Cell": 14,
                 "Owner": 1,
                 "Deputy": 2,
-                "Name": "Fleury-Mérogis",
+                "Name": "Ironforge",
                 "Stock": [ 0, 0, 0, 0 ],
                 "Production": [ 0, 0, 0, 0 ]
             },
@@ -86,7 +108,24 @@
     "NextId": 1,
     "Salt": "",
     "Places": {
-        "Cells": [],
+        "Cells": [
+            {"biome": 1, "id": 0, "city": null, "units": []},
+            {"biome": 1, "id": 1, "city": 1, "units": []},
+            {"biome": 1, "id": 2, "city": null, "units": []},
+            {"biome": 1, "id": 3, "city": null, "units": []},
+            {"biome": 1, "id": 4, "city": null, "units": []},
+            {"biome": 3, "id": 5, "city": null, "units": []},
+            {"biome": 3, "id": 6, "city": null, "units": []},
+            {"biome": 3, "id": 7, "city": null, "units": []},
+            {"biome": 1, "id": 8, "city": null, "units": []},
+            {"biome": 2, "id": 9, "city": null, "units": []},
+            {"biome": 2, "id": 10, "city": null, "units": []},
+            {"biome": 2, "id": 11, "city": null, "units": []},
+            {"biome": 1, "id": 12, "city": 2, "units": []},
+            {"biome": 1, "id": 13, "city": null, "units": []},
+            {"biome": 1, "id": 14, "city": null, "units": []},
+            {"biome": 1, "id": 15, "city": null, "units": []}
+        ],
         "Roads": [],
         "NextId": 2
     }

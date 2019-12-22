@@ -6,8 +6,8 @@
 package main
 
 import (
-	"../common/mapper"
-	. "../world-client"
+	"hegemonie/common/mapper"
+	. "hegemonie/world-client"
 	"encoding/json"
 	"flag"
 	"github.com/go-macaron/binding"
@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"io/ioutil"
 )
 
 type LoginForm struct {
@@ -153,15 +154,58 @@ func (f *front) routePages(m *macaron.Macaron) {
 		})
 	m.Get("/game/map",
 		func(ctx *macaron.Context, s session.Store) {
-			gameMap, overlay, err := mapper.Generate()
+			// gameMap, overlay, err := mapper.Generate()
+			// if err != nil {
+			// 	ctx.Resp.WriteHeader(500)
+			// 	return
+			// }
+			// ctx.Data["map"] = gameMap
+			// ctx.Data["overlay"] = overlay
+			// ctx.HTML(200, "map")
+
+			// TODO: VDO: handle error
+			resp, _ := http.Get("http://" + f.endpointWorld + "/world/places")
+			defer resp.Body.Close()
+			if resp.StatusCode != http.StatusOK {
+				// Backend error
+				ctx.Resp.WriteHeader(503)
+				return
+			}
+		    mapBytes, _ := ioutil.ReadAll(resp.Body)
+
+			resp2, _ := http.Get("http://" + f.endpointWorld + "/world/cities")
+			defer resp2.Body.Close()
+			if resp2.StatusCode != http.StatusOK {
+				// Backend error
+				ctx.Resp.WriteHeader(503)
+				return
+			}
+		    mapCities, _ := ioutil.ReadAll(resp2.Body)
+
+			ctx.Data["map"] = string(mapBytes)
+			ctx.Data["cities"] = string(mapCities)
+
+			ctx.HTML(200, "map")
+		})
+	// TODO: VDO: disable these routes when DEBUG=false
+	m.Get("/debug/map/map",
+		func(ctx *macaron.Context, s session.Store) {
+			gameMap, _, err := mapper.Generate()
 			if err != nil {
 				ctx.Resp.WriteHeader(500)
 				return
 			}
-			ctx.Data["map"] = gameMap
-			ctx.Data["overlay"] = overlay
-			ctx.HTML(200, "map")
+			ctx.JSON(200, gameMap)
 		})
+	m.Get("/debug/map/overlay",
+		func(ctx *macaron.Context, s session.Store) {
+			_, overlay, err := mapper.Generate()
+			if err != nil {
+				ctx.Resp.WriteHeader(500)
+				return
+			}
+			ctx.JSON(200, overlay)
+	})
 }
 
 func (f *front) routeForms(m *macaron.Macaron) {
